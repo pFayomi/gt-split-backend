@@ -1,0 +1,184 @@
+### Create seed user - Erioluwa (you)
+POST http://localhost:3000/auth/seed-user
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335181",
+  "fullName": "Erioluwa Olateju",
+  "pin": "123456"
+}
+
+### Create seed user - Bibian
+POST http://localhost:3000/auth/seed-user
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335182",
+  "fullName": "Bibian Eze",
+  "pin": "123456"
+}
+
+### Create seed user - Chidi
+POST http://localhost:3000/auth/seed-user
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335183",
+  "fullName": "Chidiebeleze Ezenwile",
+  "pin": "123456"
+}
+
+### Create seed user - Oluwapelumi
+POST http://localhost:3000/auth/seed-user
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335184",
+  "fullName": "Oluwapelumi Fayomi",
+  "pin": "123456"
+}
+
+### Try logging in as Erioluwa
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335181",
+  "pin": "123456"
+}
+
+
+### Try logging in as Bibian
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335182",
+  "pin": "123456"
+}
+
+
+### Try logging in as Chidi
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335183",
+  "pin": "123456"
+}
+
+### Try logging in as Oluwapelumi
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335184",
+  "pin": "123456"
+}
+
+
+### Create a real split
+POST http://localhost:3000/splits
+Content-Type: application/json
+
+{
+  "title": "Dinner Split",
+  "totalAmount": 24500,
+  "hostAccountNumber": "3005335181",
+  "splitType": "equal",
+  "sourceAccountLabel": "From GTCreaB eSavers",
+  "participants": [
+    { "name": "Bibian Eze", "initials": "BE", "phone": "+2348153535253", "isGTUser": true },
+    { "name": "Chidiebeleze Ezenwile", "initials": "CE", "phone": "+2348129238757", "isGTUser": true }
+  ]
+}
+
+
+
+
+### Fund Erioluwa
+POST http://localhost:3000/transactions/fund
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335181",
+  "amount": 182450.75
+}
+
+### Fund Bibian
+POST http://localhost:3000/transactions/fund
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335182",
+  "amount": 150000
+}
+
+### Fund Chidi
+POST http://localhost:3000/transactions/fund
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335183",
+  "amount": 95000
+}
+
+### Fund Oluwapelumi
+POST http://localhost:3000/transactions/fund
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335184",
+  "amount": 120000
+}
+
+### Check Erioluwa's balance
+GET http://localhost:3000/transactions/balance/3005335181
+
+### Set Erioluwa's phone
+POST http://localhost:3000/auth/update-phone
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335181",
+  "phone": "+2349033221911"
+}
+
+### Set Bibian's phone
+POST http://localhost:3000/auth/update-phone
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335182",
+  "phone": "+2348153535253"
+}
+
+### Set Chidi's phone
+POST http://localhost:3000/auth/update-phone
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335183",
+  "phone": "+2348129238757"
+}
+
+### Set Oluwapelumi's phone
+POST http://localhost:3000/auth/update-phone
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335184",
+  "phone": "+2349152650555"
+}
+
+
+
+
+### Check Bibian's pending requests
+# GET http://localhost:3000/splits/participant/+2348153535253
+
+
+# GET http://localhost:3000/splits/host/3005335181
+
+
+GET http://localhost:3000/transactions/balance/3005335181
