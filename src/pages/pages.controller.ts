@@ -286,8 +286,9 @@ export class PagesController {
     }
 
     if (participant.isGTUser) {
-      const devUrl = this.configService.get<string>('EXPO_DEV_URL');
-      const appLink = devUrl ? `exp://${devUrl}/--/` : '#';
+     const appUrl = this.configService.get<string>('APP_URL');
+     const devUrl = this.configService.get<string>('EXPO_DEV_URL');
+    const appLink = appUrl || (devUrl ? `exp://${devUrl}/--/` : '#');
       res.type('html').send(
         messagePage(
           logoUrl,
