@@ -1,0 +1,47 @@
+# Render blueprint: provisions the API and its Postgres database.
+# https://render.com/docs/blueprint-spec
+databases:
+  - name: gt-split-db
+    databaseName: gtworld_split
+    user: gt_split
+    plan: free
+    ipAllowList: []
+
+services:
+  - type: web
+    name: gt-split-backend
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gt-split-db
+          property: connectionString
+      - key: DB_SSL
+        value: "true"
+      - key: CORS_ORIGIN
+        value: "https://gt-split-frontend.vercel.app"
+      - key: PUBLIC_BASE_URL
+        value: "https://gt-split-backend.onrender.com"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: TERMII_API_KEY
+        sync: false
+      - key: TERMII_SENDER_ID
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_WHATSAPP_FROM
+        sync: false
+      - key: SQUAD_LOGO_URL
+        sync: false
+      - key: EXPO_DEV_URL
+        sync: false

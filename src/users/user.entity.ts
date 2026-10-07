@@ -20,6 +20,10 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
+  /** Backend-only contact detail: never exposed by GET /users or the login payload. */
+  @Column({ nullable: true })
+  email: string;
+
   @CreateDateColumn()
   createdAt: Date;
 }

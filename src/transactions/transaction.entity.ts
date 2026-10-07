@@ -26,6 +26,10 @@ export class Transaction {
   @Column({ nullable: true })
   splitId: string;
 
+  /** Free-text note the sender typed on the transfer, shown in the app's transaction details. */
+  @Column({ type: 'varchar', nullable: true })
+  narration: string;
+
   @CreateDateColumn()
   createdAt: Date;
 }

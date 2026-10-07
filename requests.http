@@ -171,6 +171,42 @@ Content-Type: application/json
   "phone": "+2349152650555"
 }
 
+### Set Erioluwa's email (backend only)
+POST http://localhost:3000/auth/update-email
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335181",
+  "email": "erioluwaolateju@gmail.com"
+}
+
+### Set Bibian's email
+POST http://localhost:3000/auth/update-email
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335182",
+  "email": "ezebibian4@gmail.com"
+}
+
+### Set Chidi's email
+POST http://localhost:3000/auth/update-email
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335183",
+  "email": "debelezefavour@gmail.com"
+}
+
+### Set Oluwapelumi's email
+POST http://localhost:3000/auth/update-email
+Content-Type: application/json
+
+{
+  "accountNumber": "3005335184",
+  "email": "opelumifayomi@gmail.com"
+}
+
 
 
 

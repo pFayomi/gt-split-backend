@@ -27,7 +27,24 @@ export class TransactionsController {
   }
 
   @Post('credit')
-  async credit(@Body() body: { accountNumber: string; amount: number; title: string; subtitle: string }) {
-    return this.transactionsService.credit(body.accountNumber, body.amount, body.title, body.subtitle);
+  async credit(
+    @Body()
+    body: {
+      accountNumber: string;
+      amount: number;
+      title: string;
+      subtitle: string;
+      kind?: 'transfer' | 'charge' | 'airtime' | 'billsplit' | 'savings';
+      narration?: string;
+    },
+  ) {
+    return this.transactionsService.credit(
+      body.accountNumber,
+      body.amount,
+      body.title,
+      body.subtitle,
+      body.kind,
+      body.narration,
+    );
   }
 }

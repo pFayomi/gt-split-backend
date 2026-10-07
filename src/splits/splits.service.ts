@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Split } from './split.entity';
 import { Participant } from './participant.entity';
 import { NotificationsService } from '../notifications/notifications.service';
+import { AutosplitService } from '../autosplit/autosplit.service'; // optional
 
 function normalizePhone(phone: string): string {
   const digits = phone.replace(/\D/g, '');
@@ -17,6 +18,7 @@ type CreateSplitDto = {
   hostName: string;
   splitType: 'equal' | 'custom';
   sourceAccountLabel: string;
+  narration?: string | null;
   participants: {
     name: string;
     initials: string;
@@ -34,6 +36,8 @@ export class SplitsService {
     @InjectRepository(Participant)
     private participantsRepository: Repository<Participant>,
     private notificationsService: NotificationsService,
+    @Optional() @Inject(forwardRef(() => AutosplitService))
+    private autosplitService?: AutosplitService,
   ) {}
 
   async createSplit(dto: CreateSplitDto): Promise<Split> {
@@ -58,6 +62,7 @@ export class SplitsService {
       hostAccountNumber: dto.hostAccountNumber,
       splitType: dto.splitType,
       sourceAccountLabel: dto.sourceAccountLabel,
+      narration: dto.narration?.trim() || undefined,
       status: 'active',
       participants,
     });
@@ -94,6 +99,31 @@ export class SplitsService {
           participantId: participant.id,
         });
       }
+    }
+
+    // Learn auto-split rule if narration present. Do not block on email failures.
+    try {
+      if (this.autosplitService) await this.autosplitService.learnFromSplit({
+        accountNumber: dto.hostAccountNumber,
+        narrationRaw: dto.narration,
+        splitId: savedSplit.id,
+        splitTitle: dto.title,
+        splitType: dto.splitType,
+        sourceAccountLabel: dto.sourceAccountLabel,
+        totalAmount: dto.totalAmount,
+        // Saved participants keep the request order and carry the share each one
+        // actually owes, so a custom split can be replayed exactly later.
+        participants: savedSplit.participants.map((p) => ({
+          name: p.name,
+          initials: p.initials,
+          phone: p.phone,
+          email: p.email || undefined,
+          isGTUser: p.isGTUser,
+          share: Number(p.share),
+        })),
+      });
+    } catch (e) {
+      console.error('Failed to learn auto-split rule:', e);
     }
 
     return savedSplit;

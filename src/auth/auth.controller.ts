@@ -23,4 +23,9 @@ export class AuthController {
   async updatePhone(@Body() body: { accountNumber: string; phone: string }) {
     return this.usersService.updatePhone(body.accountNumber, body.phone);
   }
+
+  @Post('update-email')
+  async updateEmail(@Body() body: { accountNumber: string; email: string }) {
+    return this.usersService.updateEmail(body.accountNumber, body.email);
+  }
 }

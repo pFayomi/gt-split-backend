@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './transaction.entity';
 import { User } from '../users/user.entity';
+import { AutosplitService } from '../autosplit/autosplit.service';
 
 @Injectable()
 export class TransactionsService {
@@ -11,6 +12,7 @@ export class TransactionsService {
     private transactionsRepository: Repository<Transaction>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private autosplitService: AutosplitService,
   ) {}
 
   async getBalance(accountNumber: string): Promise<number> {
@@ -43,6 +45,7 @@ export class TransactionsService {
     title: string;
     subtitle: string;
     splitId?: string;
+    narration?: string;
   }): Promise<{ transaction: Transaction; newBalance: number }> {
     const user = await this.usersRepository.findOne({ where: { accountNumber: params.accountNumber } });
     if (!user) throw new NotFoundException('Account not found');
@@ -63,8 +66,21 @@ export class TransactionsService {
       amount: params.amount,
       direction: 'out',
       splitId: params.splitId,
+      narration: params.narration?.trim() || undefined,
     });
     await this.transactionsRepository.save(transaction);
+
+    // Evaluate auto-split rule for this debit. Do not block if it fails.
+    try {
+      await this.autosplitService.evaluateForDebit({
+        accountNumber: params.accountNumber,
+        narrationRaw: params.narration,
+        amount: params.amount,
+        transactionId: transaction.id,
+      });
+    } catch (e) {
+      console.error('Failed to evaluate auto-split for debit:', e);
+    }
 
     return { transaction, newBalance: Number(user.balance) };
   }
@@ -74,6 +90,8 @@ export class TransactionsService {
     amount: number,
     title: string,
     subtitle: string,
+    kind: Transaction['kind'] = 'billsplit',
+    narration?: string,
   ): Promise<{ newBalance: number }> {
     const user = await this.usersRepository.findOne({ where: { accountNumber } });
     if (!user) throw new NotFoundException('Account not found');
@@ -83,11 +101,12 @@ export class TransactionsService {
 
     const transaction = this.transactionsRepository.create({
       accountNumber,
-      kind: 'billsplit',
+      kind,
       title,
       subtitle,
       amount,
       direction: 'in',
+      narration: narration?.trim() || undefined,
     });
     await this.transactionsRepository.save(transaction);
 

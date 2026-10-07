@@ -21,6 +21,10 @@ export class Split {
   @Column()
   sourceAccountLabel: string;
 
+  /** Optional narration captured when creating the split; used to learn auto-split rules. */
+  @Column({ type: 'varchar', nullable: true })
+  narration: string;
+
   @Column({ default: 'active' })
   status: 'active' | 'settled' | 'cancelled';
 

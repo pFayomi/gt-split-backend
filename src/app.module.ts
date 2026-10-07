@@ -1,3 +1,4 @@
+import { AutosplitModule } from './autosplit/autosplit.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,15 +16,25 @@ import { PagesModule } from './pages/pages.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST ?? 'localhost',
-      port: Number(process.env.DB_PORT ?? 5436),
-      username: process.env.DB_USER ?? 'postgres',
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME ?? 'gt_split',
+      ...(process.env.DATABASE_URL
+        ? {
+            url: process.env.DATABASE_URL,
+            ssl:
+              process.env.DB_SSL === 'false'
+                ? false
+                : { rejectUnauthorized: false },
+          }
+        : {
+            host: process.env.DB_HOST ?? 'localhost',
+            port: Number(process.env.DB_PORT ?? 5436),
+            username: process.env.DB_USER ?? 'postgres',
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME ?? 'gt_split',
+            ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
+          }),
+      type: 'postgres' as const,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
     }),
     UsersModule,
     AuthModule,
@@ -32,6 +43,7 @@ import { PagesModule } from './pages/pages.module';
     TransactionsModule,
     SavingsModule,
     PagesModule,
+    AutosplitModule,
   ],
   controllers: [AppController],
   providers: [AppService],
