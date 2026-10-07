@@ -26,7 +26,7 @@ services:
       - key: DB_SSL
         value: "true"
       - key: CORS_ORIGIN
-        value: "https://gt-split-frontend.vercel.app"
+        value: "https://gt-split-mobileapp-frontend.vercel.app"
       - key: PUBLIC_BASE_URL
         value: "https://gt-split-backend.onrender.com"
       - key: RESEND_API_KEY
