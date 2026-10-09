@@ -28,4 +28,9 @@ export class AuthController {
   async updateEmail(@Body() body: { accountNumber: string; email: string }) {
     return this.usersService.updateEmail(body.accountNumber, body.email);
   }
+
+  @Post('delete-user')
+  async deleteUser(@Body() body: { accountNumber: string }) {
+    return this.usersService.deleteUser(body.accountNumber);
+  }
 }
